@@ -8,7 +8,7 @@ import pandas as pd
 import xgboost as xgb
 
 from sklearn.feature_extraction import DictVectorizer
-from sklearn.metrics import root_mean_squared_error
+from sklearn.metrics import mean_squared_error
 
 import mlflow
 
@@ -17,7 +17,6 @@ mlflow.set_experiment("nyc-taxi-experiment")
 
 models_folder = Path('models')
 models_folder.mkdir(exist_ok=True)
-
 
 
 def read_dataframe(year, month):
@@ -77,7 +76,7 @@ def train_model(X_train, y_train, X_val, y_val, dv):
         )
 
         y_pred = booster.predict(valid)
-        rmse = root_mean_squared_error(y_val, y_pred)
+        rmse = mean_squared_error(y_val, y_pred, squared=False)
         mlflow.log_metric("rmse", rmse)
 
         with open("models/preprocessor.b", "wb") as f_out:
